@@ -33,7 +33,8 @@ app.get("/api/health", (req, res) => res.json({ ok: true }));
 
 app.use("/api/auth", authLimiter, authRoutes);
 app.use("/api/profile", profileRoutes);
-app.use("/api/resume", aiLimiter, resumeRoutes);
+// resume.js applies its own limits: strict for AI calls, relaxed for the live preview and PDF
+app.use("/api/resume", resumeRoutes);
 app.use("/api/ats", aiLimiter, atsRoutes);
 app.use("/api/skillgap", aiLimiter, skillgapRoutes);
 app.use("/api/careers", aiLimiter, careersRoutes);

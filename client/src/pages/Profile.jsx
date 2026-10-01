@@ -3,9 +3,30 @@ import api, { errMsg } from "../api/client";
 import { useAuth } from "../context/AuthContext";
 import { Badge, Bar, Button, Card, Empty, ErrorBox, Field, Input, PageHeader, Select, Spinner, Textarea } from "../components/ui";
 
-const TABS = ["Basics", "Skills", "Projects", "Certifications", "Education"];
+const TABS = ["Basics", "Experience", "Skills", "Projects", "Certifications", "Education", "Languages"];
 
 const SECTIONS = {
+  experience: {
+    fields: [
+      { name: "role", label: "Role / position", required: true },
+      { name: "company", label: "Company / organisation", required: true },
+      { name: "location", label: "Location (optional)" },
+      { name: "start", label: "Start (e.g. Aug 2025)" },
+      { name: "end", label: "End (e.g. Present or Dec 2025)" },
+      { name: "description", label: "What did you do? (one point per line)", textarea: true },
+    ],
+    title: (i) => i.role,
+    meta: (i) => [i.company, [i.start, i.end].filter(Boolean).join(" - ")].filter(Boolean).join(", "),
+    body: (i) => i.description,
+  },
+  languages: {
+    fields: [
+      { name: "name", label: "Language", required: true },
+      { name: "proficiency", label: "Proficiency", options: ["Native", "Professional", "Fluent", "Conversational", "Basic"], default: "Professional" },
+    ],
+    title: (i) => i.name,
+    meta: (i) => i.proficiency,
+  },
   skills: {
     fields: [
       { name: "name", label: "Skill", required: true },
@@ -94,7 +115,7 @@ function SectionEditor({ section, items, onChange }) {
             <div className="min-w-0">
               <p className="font-bold">{cfg.title(i)}</p>
               {cfg.meta(i) && <p className="text-sm text-ink-soft">{cfg.meta(i)}</p>}
-              {cfg.body?.(i) && <p className="mt-1 text-sm">{cfg.body(i)}</p>}
+              {cfg.body?.(i) && <p className="mt-1 whitespace-pre-line text-sm">{cfg.body(i)}</p>}
             </div>
             <button onClick={() => remove(i._id)} className="text-sm font-semibold text-bad" aria-label={`Remove ${cfg.title(i)}`}>Remove</button>
           </Card>
@@ -109,6 +130,7 @@ function Basics({ profile, onChange }) {
   const [form, setForm] = useState({
     rollNo: profile.rollNo || "", department: profile.department || "", batch: profile.batch || "",
     cgpa: profile.cgpa ?? "", backlogs: profile.backlogs ?? 0, phone: profile.phone || "",
+    headline: profile.headline || "", location: profile.location || "",
     github: profile.links?.github || "", linkedin: profile.links?.linkedin || "", portfolio: profile.links?.portfolio || "",
     targetRole: profile.targetRole || "", interests: (profile.interests || []).join(", "),
   });
@@ -122,6 +144,7 @@ function Basics({ profile, onChange }) {
     try {
       const { data } = await api.put("/profile", {
         rollNo: form.rollNo, department: form.department, batch: form.batch, phone: form.phone,
+        headline: form.headline, location: form.location,
         cgpa: form.cgpa === "" ? undefined : Number(form.cgpa), backlogs: Number(form.backlogs) || 0,
         links: { github: form.github, linkedin: form.linkedin, portfolio: form.portfolio },
         targetRole: form.targetRole, interests: form.interests.split(",").map((x) => x.trim()).filter(Boolean),
@@ -139,6 +162,8 @@ function Basics({ profile, onChange }) {
         <Field label="Department"><Input value={form.department} onChange={set("department")} placeholder="Computer Science" /></Field>
         <Field label="Batch (graduation year)"><Input value={form.batch} onChange={set("batch")} placeholder="2026" /></Field>
         <Field label="Phone"><Input value={form.phone} onChange={set("phone")} /></Field>
+        <Field label="Professional title" hint="Shown under your name on the resume."><Input value={form.headline} onChange={set("headline")} placeholder="UI/UX Designer" /></Field>
+        <Field label="Location" hint="City, state, country."><Input value={form.location} onChange={set("location")} placeholder="Kochi, Kerala, India" /></Field>
         <Field label="CGPA (0-10)"><Input type="number" step="0.01" min="0" max="10" value={form.cgpa} onChange={set("cgpa")} /></Field>
         <Field label="Active backlogs"><Input type="number" min="0" value={form.backlogs} onChange={set("backlogs")} /></Field>
         <Field label="GitHub URL"><Input value={form.github} onChange={set("github")} /></Field>

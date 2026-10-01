@@ -7,8 +7,10 @@ import { profileCompleteness, refreshReadiness } from "../services/readiness.ser
 const router = Router();
 router.use(protect, authorize("student"));
 
-const SECTIONS = ["skills", "certifications", "projects", "education"];
-const EDITABLE = ["rollNo", "department", "batch", "cgpa", "backlogs", "phone", "links", "targetRole", "interests"];
+// "experience" and "languages" are new list sections
+const SECTIONS = ["skills", "certifications", "projects", "education", "experience", "languages"];
+// "headline" and "location" are new editable fields
+const EDITABLE = ["rollNo", "department", "batch", "cgpa", "backlogs", "phone", "headline", "location", "links", "targetRole", "interests"];
 
 const getProfile = (userId) =>
   StudentProfile.findOneAndUpdate({ user: userId }, { $setOnInsert: { user: userId } }, { upsert: true, new: true });
