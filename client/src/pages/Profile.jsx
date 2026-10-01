@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import api, { errMsg } from "../api/client";
+import { useAuth } from "../context/AuthContext";
 import { Badge, Bar, Button, Card, Empty, ErrorBox, Field, Input, PageHeader, Select, Spinner, Textarea } from "../components/ui";
 
 const TABS = ["Basics", "Skills", "Projects", "Certifications", "Education"];
@@ -104,6 +105,7 @@ function SectionEditor({ section, items, onChange }) {
 }
 
 function Basics({ profile, onChange }) {
+  const { refresh } = useAuth();
   const [form, setForm] = useState({
     rollNo: profile.rollNo || "", department: profile.department || "", batch: profile.batch || "",
     cgpa: profile.cgpa ?? "", backlogs: profile.backlogs ?? 0, phone: profile.phone || "",
@@ -125,6 +127,7 @@ function Basics({ profile, onChange }) {
         targetRole: form.targetRole, interests: form.interests.split(",").map((x) => x.trim()).filter(Boolean),
       });
       onChange(data);
+      refresh();
       setMsg("Saved");
     } catch (err) { setMsg(errMsg(err)); } finally { setBusy(false); }
   }

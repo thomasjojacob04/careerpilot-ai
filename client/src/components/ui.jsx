@@ -1,5 +1,5 @@
 export const Card = ({ className = "", children }) => (
-  <div className={`rounded-lg border border-line bg-white p-5 ${className}`}>{children}</div>
+  <div className={`rounded-2xl border border-line bg-white p-5 ${className}`}>{children}</div>
 );
 
 export const Button = ({ variant = "primary", className = "", ...props }) => {
@@ -43,7 +43,7 @@ export const Badge = ({ tone = "neutral", children }) => {
 
 export const scoreColor = (v) => (v >= 70 ? "var(--color-ok)" : v >= 40 ? "var(--color-warn)" : "var(--color-bad)");
 
-export function ScoreRing({ value = 0, size = 160, label = "" }) {
+export function ScoreRing({ value = 0, size = 160, label = "", color, children }) {
   const r = 52;
   const c = 2 * Math.PI * r;
   const v = Math.max(0, Math.min(100, value));
@@ -52,22 +52,26 @@ export function ScoreRing({ value = 0, size = 160, label = "" }) {
       <svg viewBox="0 0 120 120" width={size} height={size} role="img" aria-label={`${label} ${v} out of 100`}>
         <circle cx="60" cy="60" r={r} fill="none" stroke="var(--color-line)" strokeWidth="10" />
         <circle
-          cx="60" cy="60" r={r} fill="none" stroke={scoreColor(v)} strokeWidth="10" strokeLinecap="round"
+          cx="60" cy="60" r={r} fill="none" stroke={color || scoreColor(v)} strokeWidth="10" strokeLinecap="round"
           strokeDasharray={c} strokeDashoffset={c * (1 - v / 100)} transform="rotate(-90 60 60)"
           style={{ transition: "stroke-dashoffset .8s ease" }}
         />
       </svg>
       <div className="absolute inset-0 flex flex-col items-center justify-center">
-        <span className="text-4xl font-extrabold leading-none">{Math.round(v)}</span>
-        {label && <span className="mt-1 text-xs font-semibold text-ink-soft">{label}</span>}
+        {children || (
+          <>
+            <span className="text-4xl font-extrabold leading-none">{Math.round(v)}</span>
+            {label && <span className="mt-1 text-xs font-semibold text-ink-soft">{label}</span>}
+          </>
+        )}
       </div>
     </div>
   );
 }
 
-export const Bar = ({ value = 0 }) => (
+export const Bar = ({ value = 0, color }) => (
   <div className="h-2 w-full overflow-hidden rounded-full bg-paper">
-    <div className="h-full rounded-full" style={{ width: `${Math.min(100, value)}%`, background: scoreColor(value) }} />
+    <div className="h-full rounded-full" style={{ width: `${Math.min(100, value)}%`, background: color || scoreColor(value) }} />
   </div>
 );
 

@@ -10,7 +10,7 @@ const Chart = ({ title, note, data, children, layout = "horizontal", height = 26
       <div style={{ height }}>
         <ResponsiveContainer>
           <BarChart data={data} layout={layout} margin={{ left: layout === "vertical" ? 40 : 0 }}>
-            <CartesianGrid stroke="#dde2ee" vertical={layout === "vertical"} horizontal={layout !== "vertical"} />
+            <CartesianGrid stroke="#e0ebe4" vertical={layout === "vertical"} horizontal={layout !== "vertical"} />
             {children}
           </BarChart>
         </ResponsiveContainer>
@@ -30,22 +30,22 @@ export default function Analytics() {
       <div className="grid gap-5 lg:grid-cols-2">
         <Chart title="Readiness distribution" note="Number of students in each readiness band" data={data.readinessDistribution}>
           <XAxis dataKey="range" tick={{ fontSize: 12 }} /><YAxis allowDecimals={false} width={30} tick={{ fontSize: 12 }} /><Tooltip />
-          <Bar dataKey="count" name="Students" fill="#2b59ff" radius={[4, 4, 0, 0]} />
+          <Bar dataKey="count" name="Students" fill="#15803d" radius={[4, 4, 0, 0]} />
         </Chart>
 
         <Chart title="Average readiness by department" data={data.departmentReadiness}>
           <XAxis dataKey="department" tick={{ fontSize: 11 }} /><YAxis domain={[0, 100]} width={30} tick={{ fontSize: 12 }} /><Tooltip />
-          <Bar dataKey="avg" name="Avg readiness" fill="#188a63" radius={[4, 4, 0, 0]} />
+          <Bar dataKey="avg" name="Avg readiness" fill="#22b45f" radius={[4, 4, 0, 0]} />
         </Chart>
 
         <Chart title="Most common missing skills" note="Across students' latest skill gap reports" data={data.topMissingSkills} layout="vertical" height={320}>
           <XAxis type="number" allowDecimals={false} tick={{ fontSize: 12 }} /><YAxis type="category" dataKey="skill" width={100} tick={{ fontSize: 12 }} /><Tooltip />
-          <Bar dataKey="students" name="Students" fill="#b56f08" radius={[0, 4, 4, 0]} />
+          <Bar dataKey="students" name="Students" fill="#d99a1c" radius={[0, 4, 4, 0]} />
         </Chart>
 
         <Chart title="Drive funnel" note="Registered, shortlisted and selected per drive" data={data.driveFunnel} height={320}>
           <XAxis dataKey="title" tick={{ fontSize: 11 }} /><YAxis allowDecimals={false} width={30} tick={{ fontSize: 12 }} /><Tooltip /><Legend />
-          <Bar dataKey="registered" name="Registered" fill="#9db4ff" /><Bar dataKey="shortlisted" name="Shortlisted" fill="#2b59ff" /><Bar dataKey="selected" name="Selected" fill="#188a63" />
+          <Bar dataKey="registered" name="Registered" fill="#a7dcbd" /><Bar dataKey="shortlisted" name="Shortlisted" fill="#15803d" /><Bar dataKey="selected" name="Selected" fill="#22b45f" />
         </Chart>
       </div>
 

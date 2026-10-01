@@ -1,61 +1,77 @@
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
+import {
+  BarChart3, Briefcase, Building2, Calculator, Compass, FileText, House, Layers, LogOut, Mic, Target, User, Users,
+} from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 
 const STUDENT_NAV = [
-  ["/dashboard", "Dashboard"],
-  ["/profile", "My profile"],
-  ["/resume", "Resume builder"],
-  ["/ats", "ATS check"],
-  ["/skill-gap", "Skill gap"],
-  ["/careers", "Career paths"],
-  ["/interview", "Mock interview"],
-  ["/drives", "Placement drives"],
+  ["/dashboard", "Dashboard", House],
+  ["/profile", "My profile", User],
+  ["/resume", "Resume builder", FileText],
+  ["/skill-gap", "Skill gap analysis", Target],
+  ["/interview", "Mock interview", Mic],
+  ["/aptitude", "Aptitude test", Calculator],
+  ["/careers", "Career recommendations", Compass],
+  ["/drives", "Placement drives", Briefcase],
+  ["/ats", "ATS Analysis", Layers],
 ];
 const OFFICER_NAV = [
-  ["/officer", "Overview"],
-  ["/officer/students", "Students"],
-  ["/officer/companies", "Companies"],
-  ["/officer/drives", "Drives"],
-  ["/officer/analytics", "Analytics"],
+  ["/officer", "Overview", House],
+  ["/officer/students", "Students", Users],
+  ["/officer/companies", "Companies", Building2],
+  ["/officer/drives", "Drives", Briefcase],
+  ["/officer/analytics", "Analytics", BarChart3],
 ];
+
+const initials = (name = "") => name.split(" ").filter(Boolean).slice(0, 2).map((w) => w[0]).join("").toUpperCase();
 
 export default function Layout() {
   const { user, logout } = useAuth();
   const nav = useNavigate();
   const items = user.role === "officer" ? OFFICER_NAV : STUDENT_NAV;
+  const roleLine = user.role === "officer" ? "Placement officer" : ["Student", user.department].filter(Boolean).join(" \u00b7 ");
+  const signOut = () => { logout(); nav("/login"); };
 
   return (
     <div className="min-h-screen md:flex">
-      <aside className="bg-ink text-white md:sticky md:top-0 md:h-screen md:w-60 md:shrink-0">
-        <div className="flex items-center justify-between px-5 py-4 md:block">
-          <div>
-            <p className="text-lg font-extrabold tracking-tight">CareerPilot AI</p>
-            <p className="text-xs text-white/60">{user.role === "officer" ? "Placement cell" : "Student workspace"}</p>
-          </div>
+      <aside className="bg-side text-white md:sticky md:top-0 md:flex md:h-screen md:w-64 md:shrink-0 md:flex-col">
+        <div className="flex items-center gap-3 px-5 py-5">
+          <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-white text-sm font-extrabold text-side">CP</span>
+          <p className="text-lg font-bold tracking-tight">CareerPilot AI</p>
         </div>
-        <nav className="flex gap-1 overflow-x-auto px-3 pb-3 md:flex-col md:overflow-visible" aria-label="Main">
-          {items.map(([to, label]) => (
+        <p className="hidden px-5 pb-2 text-sm font-semibold text-white/80 md:block">Menu</p>
+
+        <nav className="flex gap-1 overflow-x-auto px-3 pb-3 md:flex-1 md:flex-col md:overflow-y-auto md:overflow-x-visible" aria-label="Main">
+          {items.map(([to, label, Icon]) => (
             <NavLink
               key={to} to={to} end={to === "/officer"}
               className={({ isActive }) =>
-                `whitespace-nowrap rounded-md px-3 py-2 text-sm font-semibold transition ${isActive ? "bg-white text-ink" : "text-white/75 hover:bg-white/10"}`}
+                `flex shrink-0 items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold transition ${isActive ? "bg-side-active text-side-ink" : "text-white/85 hover:bg-white/10"}`}
             >
-              {label}
+              <Icon size={18} strokeWidth={2} aria-hidden="true" />
+              <span className="whitespace-nowrap">{label}</span>
             </NavLink>
           ))}
         </nav>
-        <div className="hidden border-t border-white/10 p-4 md:absolute md:bottom-0 md:block md:w-60">
-          <p className="truncate text-sm font-semibold">{user.name}</p>
-          <p className="truncate text-xs text-white/60">{user.email}</p>
-          <button onClick={() => { logout(); nav("/login"); }} className="mt-3 text-sm font-semibold text-white/80 underline-offset-2 hover:underline">
-            Sign out
+
+        <div className="hidden border-t border-white/15 p-4 md:block">
+          <div className="flex items-center gap-3">
+            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-white/20 text-xs font-bold">{initials(user.name)}</span>
+            <div className="min-w-0">
+              <p className="truncate text-sm font-semibold">{user.name}</p>
+              <p className="truncate text-xs text-white/70">{roleLine}</p>
+            </div>
+          </div>
+          <button onClick={signOut} className="mt-3 inline-flex items-center gap-2 rounded-lg border border-white/30 px-3 py-1.5 text-sm font-semibold text-white hover:bg-white/10">
+            <LogOut size={15} aria-hidden="true" /> Log out
           </button>
         </div>
       </aside>
+
       <main className="min-w-0 flex-1 p-4 md:p-8">
-        <div className="mx-auto max-w-5xl"><Outlet /></div>
+        <div className="mx-auto max-w-6xl"><Outlet /></div>
         <div className="mt-8 border-t border-line pt-4 md:hidden">
-          <button onClick={() => { logout(); nav("/login"); }} className="text-sm font-semibold text-ink-soft">Sign out ({user.name})</button>
+          <button onClick={signOut} className="text-sm font-semibold text-ink-soft">Log out ({user.name})</button>
         </div>
       </main>
     </div>

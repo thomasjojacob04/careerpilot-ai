@@ -7,7 +7,7 @@ import { Button, ErrorBox, Field, Input } from "../components/ui";
 export function AuthShell({ title, subtitle, children }) {
   return (
     <div className="grid min-h-screen md:grid-cols-2">
-      <div className="hidden flex-col justify-between bg-ink p-10 text-white md:flex">
+      <div className="hidden flex-col justify-between bg-side p-10 text-white md:flex">
         <p className="text-xl font-extrabold tracking-tight">CareerPilot AI</p>
         <div>
           <h2 className="max-w-md text-4xl font-extrabold leading-tight">Practise the interview before it counts.</h2>

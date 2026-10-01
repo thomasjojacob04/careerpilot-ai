@@ -15,6 +15,8 @@ import interviewRoutes from "./routes/interview.js";
 import companyRoutes from "./routes/companies.js";
 import driveRoutes from "./routes/drives.js";
 import officerRoutes from "./routes/officer.js";
+import dashboardRoutes from "./routes/dashboard.js";
+import aptitudeRoutes from "./routes/aptitude.js";
 
 const app = express();
 
@@ -40,6 +42,8 @@ app.use("/api/interview", aiLimiter, interviewRoutes);
 app.use("/api/companies", companyRoutes);
 app.use("/api/drives", driveRoutes);
 app.use("/api/officer", officerRoutes);
+app.use("/api/dashboard", dashboardRoutes);
+app.use("/api/aptitude", aptitudeRoutes);
 
 app.use(notFound);
 app.use(errorHandler);

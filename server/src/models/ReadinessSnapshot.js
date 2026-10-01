@@ -4,7 +4,11 @@ const snapshotSchema = new mongoose.Schema(
   {
     student: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true, index: true },
     score: { type: Number, required: true },
-    breakdown: { profile: Number, resume: Number, skills: Number, interview: Number },
+    completeness: Number,
+    breakdown: {
+      technical: Number, certifications: Number, projects: Number,
+      aptitude: Number, communication: Number, academics: Number,
+    },
   },
   { timestamps: true }
 );

@@ -11,6 +11,7 @@ import ResumeBuilder from "./pages/ResumeBuilder";
 import AtsAnalyzer from "./pages/AtsAnalyzer";
 import SkillGap from "./pages/SkillGap";
 import Careers from "./pages/Careers";
+import Aptitude from "./pages/Aptitude";
 import StudentDrives from "./pages/StudentDrives";
 import InterviewResult from "./pages/InterviewResult";
 import OfficerDashboard from "./pages/officer/OfficerDashboard";
@@ -52,6 +53,7 @@ export default function App() {
         <Route path="/ats" element={student(<AtsAnalyzer />)} />
         <Route path="/skill-gap" element={student(<SkillGap />)} />
         <Route path="/careers" element={student(<Careers />)} />
+        <Route path="/aptitude" element={student(<Aptitude />)} />
         <Route path="/drives" element={student(<StudentDrives />)} />
         <Route path="/interview" element={student(<InterviewSetup />)} />
         <Route path="/interview/result/:id" element={student(<InterviewResult />)} />

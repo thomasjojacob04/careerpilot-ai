@@ -6,6 +6,7 @@ import StudentProfile from "../models/StudentProfile.js";
 import JobRole from "../models/JobRole.js";
 import Company from "../models/Company.js";
 import PlacementDrive from "../models/PlacementDrive.js";
+import AptitudeQuestion from "../models/AptitudeQuestion.js";
 
 const s = (name, weight = 1) => ({ name, weight });
 
@@ -26,10 +27,39 @@ const ROLES = [
     requiredSkills: [s("Java", 3), s("Data Structures", 3), s("SQL", 2), s("Spring Boot", 2), s("OOP", 2), s("Git", 1), s("REST APIs", 2)] },
 ];
 
+
+const q = (category, question, options, answerIndex, explanation) => ({ category, question, options, answerIndex, explanation });
+
+const APTITUDE = [
+  q("quantitative", "A train 150 m long passes a pole in 15 seconds. What is its speed in km/h?", ["30", "36", "40", "45"], 1, "150 m / 15 s = 10 m/s. Multiply by 3.6 to get 36 km/h."),
+  q("quantitative", "What is 20% of 20% of 500?", ["50", "25", "20", "100"], 2, "20% of 500 = 100, and 20% of 100 = 20."),
+  q("quantitative", "The average of five numbers is 24. When one number is removed, the average of the remaining four is 22. What number was removed?", ["32", "28", "30", "34"], 0, "Total = 120. Remaining total = 88. Removed number = 120 - 88 = 32."),
+  q("quantitative", "An item bought for Rs 800 is sold for Rs 920. What is the profit percentage?", ["12%", "18%", "20%", "15%"], 3, "Profit = 120. 120 / 800 x 100 = 15%."),
+  q("quantitative", "A can finish a job in 12 days and B in 24 days. How many days will they take working together?", ["6", "9", "8", "10"], 2, "Combined rate = 1/12 + 1/24 = 3/24 = 1/8, so 8 days."),
+  q("quantitative", "What is the next number in the series 2, 6, 12, 20, 30, ...?", ["40", "42", "44", "36"], 1, "The differences are 4, 6, 8, 10, so the next difference is 12 and the next term is 42."),
+  q("quantitative", "The ratio of boys to girls in a class is 3:2. If the class has 30 students, how many are girls?", ["12", "10", "15", "18"], 0, "Girls = 2/5 x 30 = 12."),
+  q("quantitative", "What is the simple interest on Rs 5,000 at 8% per annum for 3 years?", ["1,000", "1,500", "1,200", "1,600"], 2, "SI = 5000 x 8 x 3 / 100 = 1,200."),
+  q("logical", "All roses are flowers. Some flowers fade quickly. Which conclusion MUST be true?", ["All roses fade quickly", "Some roses fade quickly", "No rose fades quickly", "None of these must be true"], 3, "The flowers that fade quickly might not include any roses, so none of the first three follows."),
+  q("logical", "Pointing to a photograph, Ravi says, \"She is the daughter of my grandfather's only son.\" How is she related to Ravi?", ["Cousin", "Aunt", "Sister", "Niece"], 2, "Ravi's grandfather's only son is Ravi's father. His daughter is Ravi's sister."),
+  q("logical", "In a certain code, CAT is written as DBU. How is DOG written in that code?", ["DPH", "EPH", "EOH", "CNF"], 1, "Each letter moves one step forward: D to E, O to P, G to H."),
+  q("logical", "Find the odd one out: 16, 25, 36, 49, 58", ["16", "36", "58", "49"], 2, "All the others are perfect squares. 58 is not."),
+  q("logical", "If the day after tomorrow is Monday, what day is it today?", ["Friday", "Sunday", "Thursday", "Saturday"], 3, "Two days before Monday is Saturday."),
+  q("logical", "All engineers are graduates. All graduates are literate. Conclusion: All engineers are literate.", ["Cannot be determined", "False", "True", "Partly true"], 2, "Engineers are inside graduates, and graduates are inside literate people, so the conclusion follows."),
+  q("verbal", "Choose the word closest in meaning to CANDID.", ["Secretive", "Rude", "Shy", "Frank"], 3, "Candid means honest and direct, which is the meaning of frank."),
+  q("verbal", "Choose the word opposite in meaning to SCARCE.", ["Plentiful", "Rare", "Costly", "Tiny"], 0, "Scarce means in short supply. Plentiful is the opposite."),
+  q("verbal", "Fill in the blank: The committee ___ its decision yesterday.", ["announce", "announcing", "announced", "have announce"], 2, "The action finished in the past, so the past tense announced is correct."),
+  q("verbal", "Fill in the blank: She is very good ___ mathematics.", ["in", "at", "on", "with"], 1, "The correct phrase is good at."),
+  q("verbal", "Choose the correctly spelled word.", ["Accomodate", "Acommodate", "Accommodate", "Acomodate"], 2, "Accommodate has a double c and a double m."),
+  q("verbal", "What does the idiom \"to break the ice\" mean?", ["To damage something frozen", "To end a friendship", "To feel very cold", "To start a conversation in an awkward social setting"], 3, "It means to ease tension and get a conversation started."),
+];
+
 await mongoose.connect(process.env.MONGO_URI);
 
 for (const r of ROLES) await JobRole.updateOne({ title: r.title }, r, { upsert: true });
 console.log(`Job roles: ${ROLES.length}`);
+
+for (const a of APTITUDE) await AptitudeQuestion.updateOne({ question: a.question }, a, { upsert: true });
+console.log(`Aptitude questions: ${APTITUDE.length}`);
 
 async function ensureUser(name, email, password, role) {
   let u = await User.findOne({ email });

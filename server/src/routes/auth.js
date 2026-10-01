@@ -18,7 +18,14 @@ const registerSchema = z.object({
 });
 const loginSchema = z.object({ email: z.string().trim().email(), password: z.string().min(1) });
 
-const publicUser = (u) => ({ id: u._id, name: u.name, email: u.email, role: u.role });
+const publicUser = async (u) => {
+  const base = { id: u._id, name: u.name, email: u.email, role: u.role };
+  if (u.role === "student") {
+    const p = await StudentProfile.findOne({ user: u._id }).select("department").lean();
+    base.department = p?.department || "";
+  }
+  return base;
+};
 
 router.post("/register", validate(registerSchema), asyncHandler(async (req, res) => {
   const { name, email, password, role, inviteCode } = req.body;
@@ -30,16 +37,16 @@ router.post("/register", validate(registerSchema), asyncHandler(async (req, res)
 
   const user = await User.create({ name, email, role, passwordHash: await bcrypt.hash(password, 12) });
   if (role === "student") await StudentProfile.create({ user: user._id });
-  res.status(201).json({ token: signToken(user), user: publicUser(user) });
+  res.status(201).json({ token: signToken(user), user: await publicUser(user) });
 }));
 
 router.post("/login", validate(loginSchema), asyncHandler(async (req, res) => {
   const user = await User.findOne({ email: req.body.email.toLowerCase() });
   const ok = user && (await bcrypt.compare(req.body.password, user.passwordHash));
   if (!ok) throw new HttpError(401, "Incorrect email or password");
-  res.json({ token: signToken(user), user: publicUser(user) });
+  res.json({ token: signToken(user), user: await publicUser(user) });
 }));
 
-router.get("/me", protect, (req, res) => res.json({ user: publicUser(req.user) }));
+router.get("/me", protect, asyncHandler(async (req, res) => res.json({ user: await publicUser(req.user) })));
 
 export default router;
